@@ -1,1 +1,415 @@
 # shufflin-meishi-trial-title-
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>シャッフリン 名刺メーカー</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:sans-serif;background:#f4eff7;color:#333}
+header{padding:20px;text-align:center;color:white;background:linear-gradient(135deg,#6a1b9a,#c084dc,#fff,#4a126d)}
+.container{max-width:600px;margin:auto;padding:20px}
+.box{background:white;padding:18px;margin-bottom:18px;border-radius:16px;box-shadow:0 3px 12px #ddd}
+label{display:block;margin-top:12px;font-weight:bold}
+input{width:100%;padding:11px;margin-top:5px;border:1px solid #ccc;border-radius:8px}
+input[type=color]{height:45px;padding:3px;cursor:pointer}
+button{width:100%;padding:14px;margin-top:12px;border:0;border-radius:10px;background:#6a1b9a;color:white;font-size:16px;font-weight:bold}
+button:active{transform:scale(.98)}
+.saveInfo,.urlBox{margin-top:10px;padding:12px;border-radius:8px;background:#f4eff7;color:#6a1b9a;text-align:center;font-size:13px}
+.colorTitle{margin-top:18px;padding-top:12px;border-top:1px solid #ddd;color:#6a1b9a}
+.resetButton{background:#777;font-size:14px}
+.urlButton{display:block;width:100%;padding:14px;border-radius:10px;background:#6a1b9a;color:white;text-decoration:none;font-size:16px;font-weight:bold}
+#card{width:100%;aspect-ratio:1.75/1;position:relative;overflow:hidden;border-radius:8px;background:linear-gradient(135deg,#6a1b9a,#b76bd3,#fff,#4a126d);color:white;padding:6%;margin-top:15px}
+#card:before{content:"";position:absolute;width:160%;height:45%;left:-30%;top:28%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),rgba(255,255,255,.75),rgba(255,255,255,.15),transparent);filter:blur(18px);transform:rotate(-18deg);animation:spaceLight 8s ease-in-out infinite;pointer-events:none}
+#card:after{content:"✦   ·    ✧      ·  ✦    ·       ✧   ·   ✦";position:absolute;inset:0;color:rgba(255,255,255,.75);font-size:clamp(8px,2vw,14px);letter-spacing:8px;line-height:3;padding:3%;opacity:.65;animation:stars 6s ease-in-out infinite alternate;pointer-events:none}
+@keyframes spaceLight{0%{transform:translateX(-15%) rotate(-18deg);opacity:.25}50%{transform:translateX(15%) rotate(-18deg);opacity:.75}100%{transform:translateX(-15%) rotate(-18deg);opacity:.25}}
+@keyframes stars{0%{transform:translate(0,0);opacity:.4}100%{transform:translate(8px,-5px);opacity:.85}}
+#front,#back{position:relative;z-index:2;width:100%;height:100%}
+.name{font-size:clamp(20px,5vw,34px);font-weight:bold;text-shadow:0 2px 5px rgba(60,0,80,.3)}
+.title{margin-top:5px;font-size:clamp(11px,2.5vw,17px);text-shadow:0 2px 4px rgba(60,0,80,.3)}
+.info{position:absolute;bottom:8%;left:6%;font-size:clamp(11px,2.5vw,17px);line-height:1.7;text-shadow:0 2px 4px rgba(60,0,80,.3)}
+.phoneText{font-size:clamp(14px,3.2vw,21px);font-weight:bold;margin-bottom:3px}
+.logo{position:absolute;right:6%;top:7%;font-size:clamp(25px,7vw,50px);text-shadow:0 0 8px white,0 0 18px #e5b8ff}
+.photo{position:absolute;right:6%;bottom:8%;width:22%;aspect-ratio:1;object-fit:cover;border-radius:50%;border:3px solid white;display:none;box-shadow:0 0 12px rgba(255,255,255,.9)}
+.backContent{position:absolute;inset:8%;text-align:center}
+.backTitle{font-size:clamp(18px,4.5vw,30px);font-weight:bold;text-shadow:0 2px 5px rgba(60,0,80,.3)}
+.message{margin-top:8%;font-size:clamp(10px,2.4vw,16px);line-height:1.7;text-shadow:0 2px 4px rgba(60,0,80,.3)}
+.qr{position:absolute;bottom:6%;width:16%;aspect-ratio:1;background:white;color:#333;display:flex;align-items:center;justify-content:center;font-size:clamp(7px,1.7vw,11px);text-align:center;border-radius:5px;overflow:hidden}
+.qr img{width:100%;height:100%;object-fit:contain;display:none}
+#lineQRBox{left:13%}
+#instagramQRBox{left:42%}
+#homepageQRBox{left:71%}
+#download{display:none;text-align:center;text-decoration:none;background:#333;color:white;padding:14px;margin-top:12px;border-radius:10px}
+</style>
+</head>
+<body>
+<header>
+<h1>不規則星シャッフリン</h1>
+<p>名刺メーカー</p>
+</header>
+
+<div class="container">
+<div class="box">
+<label>名前</label><input id="name" value="サンプル">
+<label>肩書き</label><input id="title" value="サンプル">
+<label>電話番号</label><input id="phone" value="000-0000-0000">
+<label>メール</label><input id="email" placeholder="メールアドレス">
+<label>住所</label><input id="address" placeholder="秋田県秋田市">
+<label>YouTube</label><input id="youtube" placeholder="YouTube URL">
+<label>Instagram</label><input id="instagram" placeholder="Instagram URL">
+<label>ホームページ</label><input id="homepage" placeholder="ホームページ URL">
+<label>LINE</label><input id="line" placeholder="LINE URL">
+<label>LINE表示名</label><input id="lineLabel" value="LINE">
+
+<label>LINE QRコード</label><input type="file" accept="image/*" onchange="loadImage(event,'lineQR','shufflin_card_lineQR','lineQRText')">
+<label>Instagram QRコード</label><input type="file" accept="image/*" onchange="loadImage(event,'instagramQR','shufflin_card_instagramQR','instagramQRText')">
+<label>ホームページ QRコード</label><input type="file" accept="image/*" onchange="loadImage(event,'homepageQR','shufflin_card_homepageQR','homepageQRText')">
+<label>写真</label><input type="file" id="photoInput" accept="image/*" onchange="loadPhoto(event)">
+
+<label>背景色</label><input type="color" id="color" value="#6a1b9a">
+<div class="colorTitle">文字色を選択</div>
+<label>名前の文字色</label><input type="color" id="nameColor" value="#ffffff">
+<label>肩書きの文字色</label><input type="color" id="titleColor" value="#ffffff">
+<label>電話番号の文字色</label><input type="color" id="phoneColor" value="#ffffff">
+<label>その他文字色</label><input type="color" id="infoColor" value="#ffffff">
+
+<label>裏面タイトル</label><input id="backTitle" value="サンプルタイトル">
+<label>裏面メッセージ</label><input id="backMessage" value="サンプルメッセージ">
+
+<button class="resetButton" onclick="resetData()">保存データをリセット</button>
+<div class="saveInfo">入力内容は自動保存されます</div>
+</div>
+
+<div class="box">
+<h2>名刺プレビュー</h2>
+<button onclick="showFront()">表面を表示</button>
+<button onclick="showBack()">裏面を表示</button>
+
+<div id="card">
+<div id="front">
+<div class="logo">★</div>
+<div class="name" id="viewName"></div>
+<div class="title" id="viewTitle"></div>
+<img id="viewPhoto" class="photo">
+<div class="info">
+<div id="viewPhone" class="phoneText"></div>
+<div id="viewEmail"></div>
+<div id="viewAddress"></div>
+<div id="viewSNS"></div>
+</div>
+</div>
+
+<div id="back" style="display:none">
+<div class="backContent">
+<div class="logo">★</div>
+<div class="backTitle" id="viewBackTitle"></div>
+<div class="message" id="viewMessage"></div>
+</div>
+<div class="qr" id="lineQRBox"><img id="lineQR"><div id="lineQRText">LINE</div></div>
+<div class="qr" id="instagramQRBox"><img id="instagramQR"><div id="instagramQRText">Instagram</div></div>
+<div class="qr" id="homepageQRBox"><img id="homepageQR"><div id="homepageQRText">ホームページ</div></div>
+</div>
+</div>
+
+<button onclick="saveCard()">表示中の面を画像保存</button>
+<a id="download">保存した画像を開く</a>
+</div>
+
+<div class="box">
+<h2>デジタル名刺</h2>
+<button onclick="createDigitalCardURL()">デジタル名刺を作成</button>
+<div class="urlBox" id="digitalURL"></div>
+</div>
+</div>
+
+<script>
+let currentSide="front";
+let exportCanvas=null;
+
+const saveFields=[
+"name","title","phone","email","address","youtube","instagram","homepage","line",
+"color","nameColor","titleColor","phoneColor","infoColor","lineLabel","backTitle","backMessage"
+];
+
+function saveData(){
+saveFields.forEach(id=>{
+const el=document.getElementById(id);
+if(el)localStorage.setItem("shufflin_card_"+id,el.value);
+});
+}
+
+function loadData(){
+saveFields.forEach(id=>{
+const saved=localStorage.getItem("shufflin_card_"+id);
+const el=document.getElementById(id);
+if(saved!==null&&el)el.value=saved;
+});
+}
+
+function resetData(){
+if(!confirm("保存している名刺データをリセットしますか？"))return;
+saveFields.forEach(id=>localStorage.removeItem("shufflin_card_"+id));
+["photo","lineQR","instagramQR","homepageQR"].forEach(id=>localStorage.removeItem("shufflin_card_"+id));
+location.reload();
+}
+
+function updateCard(){
+const pairs=[
+["name","viewName"],["title","viewTitle"],["phone","viewPhone"],
+["email","viewEmail"],["address","viewAddress"],
+["backTitle","viewBackTitle"],["backMessage","viewMessage"],
+["lineLabel","lineQRText"]
+];
+pairs.forEach(([from,to])=>document.getElementById(to).textContent=document.getElementById(from).value);
+
+document.getElementById("viewName").style.color=document.getElementById("nameColor").value;
+document.getElementById("viewTitle").style.color=document.getElementById("titleColor").value;
+document.getElementById("viewPhone").style.color=document.getElementById("phoneColor").value;
+document.getElementById("viewEmail").style.color=document.getElementById("infoColor").value;
+document.getElementById("viewAddress").style.color=document.getElementById("infoColor").value;
+document.getElementById("viewBackTitle").style.color=document.getElementById("titleColor").value;
+document.getElementById("viewMessage").style.color=document.getElementById("infoColor").value;
+saveData();
+}
+
+function changeColor(){
+const c=document.getElementById("color").value;
+document.getElementById("card").style.background=
+`radial-gradient(circle at 20% 25%,rgba(255,255,255,.95),rgba(255,255,255,.35) 8%,transparent 25%),
+radial-gradient(circle at 75% 70%,rgba(224,190,244,.9),rgba(224,190,244,.3) 15%,transparent 35%),
+linear-gradient(135deg,${c} 0%,#b76bd3 28%,#f4ddfb 52%,#fff 68%,#7c2ca5 85%,#4a126d 100%)`;
+saveData();
+}
+
+function loadPhoto(event){
+const file=event.target.files[0];if(!file)return;
+const reader=new FileReader();
+reader.onload=e=>{
+document.getElementById("viewPhoto").src=e.target.result;
+document.getElementById("viewPhoto").style.display="block";
+localStorage.setItem("shufflin_card_photo",e.target.result);
+};
+reader.readAsDataURL(file);
+}
+
+function loadImage(event,imgId,storageKey,labelId){
+const file=event.target.files[0];if(!file)return;
+const reader=new FileReader();
+reader.onload=e=>{
+const img=document.getElementById(imgId);
+img.src=e.target.result;img.style.display="block";
+document.getElementById(labelId).style.display="none";
+localStorage.setItem(storageKey,e.target.result);
+};
+reader.readAsDataURL(file);
+}
+
+function showFront(){
+currentSide="front";
+document.getElementById("front").style.display="block";
+document.getElementById("back").style.display="none";
+}
+
+function showBack(){
+currentSide="back";
+document.getElementById("front").style.display="none";
+document.getElementById("back").style.display="block";
+}
+
+/* デジタル名刺へ入力内容と各色を渡す */
+function createDigitalCardURL(){
+const params=new URLSearchParams();
+
+saveFields.forEach(id=>{
+const el=document.getElementById(id);
+if(el)params.set(id,el.value);
+});
+
+/* 色設定を明示的に渡す */
+["color","nameColor","titleColor","phoneColor","infoColor"].forEach(id=>{
+params.set(id,document.getElementById(id).value);
+});
+
+params.set("message",document.getElementById("backMessage").value);
+
+const baseURL="https://chipper-manatee-fe9d63.netlify.app/";
+const url=baseURL+"?"+params.toString();
+
+const box=document.getElementById("digitalURL");
+box.replaceChildren();
+
+const link=document.createElement("a");
+link.href=url;
+link.target="_blank";
+link.rel="noopener noreferrer";
+link.className="urlButton";
+link.textContent="デジタル名刺を開く";
+box.appendChild(link);
+}
+
+/* 印刷用画像の背景 */
+function drawSpaceBackground(ctx){
+const c=document.getElementById("color").value;
+const gradient=ctx.createLinearGradient(0,0,1050,600);
+gradient.addColorStop(0,c);
+gradient.addColorStop(.28,"#b76bd3");
+gradient.addColorStop(.52,"#f4ddfb");
+gradient.addColorStop(.68,"#ffffff");
+gradient.addColorStop(.85,"#7c2ca5");
+gradient.addColorStop(1,"#4a126d");
+ctx.fillStyle=gradient;
+ctx.fillRect(0,0,1050,600);
+
+const glow=ctx.createRadialGradient(220,150,10,220,150,280);
+glow.addColorStop(0,"rgba(255,255,255,.9)");
+glow.addColorStop(.25,"rgba(255,255,255,.35)");
+glow.addColorStop(1,"rgba(255,255,255,0)");
+ctx.fillStyle=glow;ctx.fillRect(0,0,1050,600);
+
+const glow2=ctx.createRadialGradient(780,430,10,780,430,300);
+glow2.addColorStop(0,"rgba(225,190,245,.9)");
+glow2.addColorStop(.3,"rgba(180,100,215,.35)");
+glow2.addColorStop(1,"rgba(100,20,150,0)");
+ctx.fillStyle=glow2;ctx.fillRect(0,0,1050,600);
+
+[[80,70,3],[170,120,2],[270,55,2],[370,145,3],[480,80,2],
+[590,130,3],[690,55,2],[790,160,3],[900,80,2],[980,190,3],
+[120,300,2],[250,380,3],[390,300,2],[540,390,3],[680,300,2],
+[820,360,3],[940,310,2],[1000,470,3]].forEach(s=>{
+ctx.beginPath();ctx.arc(s[0],s[1],s[2],0,Math.PI*2);
+ctx.fillStyle="rgba(255,255,255,.8)";
+ctx.shadowColor="white";ctx.shadowBlur=10;ctx.fill();
+});
+ctx.shadowBlur=0;
+}
+
+function saveCard(){
+exportCanvas=document.createElement("canvas");
+exportCanvas.width=1050;exportCanvas.height=600;
+const ctx=exportCanvas.getContext("2d");
+drawSpaceBackground(ctx);
+
+if(currentSide==="front"){
+ctx.textAlign="left";
+ctx.fillStyle=document.getElementById("nameColor").value;
+ctx.font="bold 55px sans-serif";
+ctx.fillText(document.getElementById("name").value,70,130);
+
+ctx.fillStyle=document.getElementById("titleColor").value;
+ctx.font="28px sans-serif";
+ctx.fillText(document.getElementById("title").value,70,175);
+
+ctx.fillStyle=document.getElementById("phoneColor").value;
+ctx.font="bold 30px sans-serif";
+let y=410;
+const phone=document.getElementById("phone").value;
+if(phone){ctx.fillText(phone,70,y);y+=45;}
+
+ctx.fillStyle=document.getElementById("infoColor").value;
+ctx.font="22px sans-serif";
+[document.getElementById("email").value,document.getElementById("address").value].forEach(t=>{
+if(t){ctx.fillText(t,70,y);y+=35;}
+});
+
+ctx.fillStyle="#ffffff";ctx.font="80px sans-serif";
+ctx.fillText("★",900,110);
+
+const photoData=localStorage.getItem("shufflin_card_photo");
+if(photoData){
+const img=new Image();
+img.onload=()=>{
+ctx.save();ctx.beginPath();ctx.arc(900,450,75,0,Math.PI*2);ctx.clip();
+ctx.drawImage(img,825,375,150,150);ctx.restore();
+ctx.beginPath();ctx.arc(900,450,75,0,Math.PI*2);
+ctx.strokeStyle="#ffffff";ctx.lineWidth=5;ctx.stroke();
+finishSave();
+};
+img.onerror=finishSave;
+img.src=photoData;
+}else finishSave();
+return;
+}
+
+if(currentSide==="back"){
+ctx.textAlign="center";
+ctx.fillStyle=document.getElementById("titleColor").value;
+ctx.font="bold 45px sans-serif";
+ctx.fillText(document.getElementById("backTitle").value,525,180);
+
+ctx.fillStyle=document.getElementById("infoColor").value;
+ctx.font="24px sans-serif";
+ctx.fillText(document.getElementById("backMessage").value,525,280);
+
+const qrList=[
+{data:localStorage.getItem("shufflin_card_lineQR"),x:80,label:document.getElementById("lineLabel").value},
+{data:localStorage.getItem("shufflin_card_instagramQR"),x:450,label:"Instagram"},
+{data:localStorage.getItem("shufflin_card_homepageQR"),x:820,label:"ホームページ"}
+];
+const items=qrList.filter(i=>i.data);
+if(!items.length){finishSave();return;}
+
+let remaining=items.length;
+function done(){remaining--;if(remaining===0)finishSave();}
+
+items.forEach(item=>{
+const img=new Image();
+img.onload=()=>{
+ctx.drawImage(img,item.x,370,150,150);
+ctx.font="bold 18px sans-serif";
+ctx.fillStyle=document.getElementById("infoColor").value;
+ctx.fillText(item.label,item.x+75,550);
+done();
+};
+img.onerror=done;
+img.src=item.data;
+});
+}
+}
+
+function finishSave(){
+if(!exportCanvas)return;
+const link=document.getElementById("download");
+link.href=exportCanvas.toDataURL("image/png");
+link.download=currentSide==="front"?"shufflin-business-card-front.png":"shufflin-business-card-back.png";
+link.style.display="block";
+link.textContent=currentSide==="front"?"表面画像を開く":"裏面画像を開く";
+}
+
+/* 起動時に保存データを復元 */
+loadData();
+
+const savedPhoto=localStorage.getItem("shufflin_card_photo");
+if(savedPhoto){
+const p=document.getElementById("viewPhoto");
+p.src=savedPhoto;p.style.display="block";
+}
+
+[
+["lineQR","shufflin_card_lineQR","lineQRText"],
+["instagramQR","shufflin_card_instagramQR","instagramQRText"],
+["homepageQR","shufflin_card_homepageQR","homepageQRText"]
+].forEach(([imgId,key,labelId])=>{
+const data=localStorage.getItem(key);
+if(data){
+const img=document.getElementById(imgId);
+img.src=data;img.style.display="block";
+document.getElementById(labelId).style.display="none";
+}
+});
+
+["name","title","phone","email","address","youtube","instagram","homepage","line",
+"lineLabel","backTitle","backMessage"].forEach(id=>{
+document.getElementById(id).addEventListener("input",updateCard);
+});
+
+["nameColor","titleColor","phoneColor","infoColor"].forEach(id=>{
+document.getElementById(id).addEventListener("input",updateCard);
+});
+
+document.getElementById("color").addEventListener("input",changeColor);
+updateCard();
+changeColor();
+</script>
+</body>
+</html>
